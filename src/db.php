@@ -1,7 +1,22 @@
 <?php
 session_start();
 
-$storageDir = getenv('DATA_DIR_ABS') ?: (__DIR__ . '/data');
+function ff_detect_storage_dir()
+{
+	$configuredDir = getenv('DATA_DIR_ABS');
+	if (is_string($configuredDir) && trim($configuredDir) !== '') {
+		return rtrim($configuredDir, '/\\');
+	}
+
+	$azureHome = getenv('HOME');
+	if (is_string($azureHome) && trim($azureHome) !== '') {
+		return rtrim($azureHome, '/\\') . '/site/data/fotoforum';
+	}
+
+	return __DIR__ . '/data';
+}
+
+$storageDir = ff_detect_storage_dir();
 
 if (!is_dir($storageDir)) {
 	mkdir($storageDir, 0777, true);
@@ -11,6 +26,31 @@ function ff_storage_file($name)
 {
 	global $storageDir;
 	return $storageDir . '/' . $name . '.json';
+}
+
+function ff_migrate_legacy_data_if_needed()
+{
+	global $storageDir;
+
+	$legacyDir = __DIR__ . '/data';
+	$normalizedStorage = str_replace('\\', '/', rtrim($storageDir, '/\\'));
+	$normalizedLegacy = str_replace('\\', '/', rtrim($legacyDir, '/\\'));
+
+	if ($normalizedStorage === $normalizedLegacy || !is_dir($legacyDir)) {
+		return;
+	}
+
+	$collections = ['users', 'posts', 'votes'];
+	foreach ($collections as $collection) {
+		$source = $legacyDir . '/' . $collection . '.json';
+		$destination = ff_storage_file($collection);
+
+		if (!is_file($source) || is_file($destination)) {
+			continue;
+		}
+
+		@copy($source, $destination);
+	}
 }
 
 function ff_ensure_file($path)
@@ -226,6 +266,7 @@ function ff_get_top_posts($limit = 20)
 	return array_slice($posts, 0, (int) $limit);
 }
 
+ff_migrate_legacy_data_if_needed();
 ff_ensure_file(ff_storage_file('users'));
 ff_ensure_file(ff_storage_file('posts'));
 ff_ensure_file(ff_storage_file('votes'));

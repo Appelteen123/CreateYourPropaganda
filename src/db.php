@@ -50,7 +50,7 @@ function ff_save_collection($name, array $data)
 		return false;
 	}
 	
-	$json = json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	$json = json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 	if ($json === false) {
 		error_log("JSON encode failed for collection: $name");
 		return false;

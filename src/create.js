@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", function() {
 const canvas = document.getElementById("canvas")
 let selectedItem = null
 let selectedItems = new Set()
@@ -411,3 +412,4 @@ function getRotation(el) {
   let match = transform.match(/rotate\(([^)]+)deg\)/)
   return match ? parseFloat(match[1]) : 0
 }
+});

@@ -18,11 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-        if ($stmt->execute([$username, $hashedPassword])) {
+		if (ff_create_user($username, $hashedPassword)) {
             $success = 'Account aangemaakt! Je kunt nu inloggen.';
         } else {
-            $error = 'Registreren is mislukt, probeer het opnieuw.';
+			$error = 'Gebruikersnaam bestaat al of registreren is mislukt.';
         }
     }
 }

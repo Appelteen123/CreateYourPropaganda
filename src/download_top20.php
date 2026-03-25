@@ -60,21 +60,7 @@ function createZipWithPowerShell($entries, $zipFilePath)
     return is_file($zipFilePath) && filesize($zipFilePath) > 0;
 }
 
-$stmt = $pdo->query(
-    "SELECT
-        p.id,
-        p.image_url,
-        u.username,
-        COUNT(v.id) AS like_count
-    FROM posts p
-    JOIN users u ON u.id = p.user_id
-    LEFT JOIN votes v ON v.post_id = p.id AND v.vote_type = 'like'
-    GROUP BY p.id, p.image_url, u.username
-    ORDER BY like_count DESC, p.id DESC
-    LIMIT 20"
-);
-
-$topPhotos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$topPhotos = ff_get_top_posts(20);
 
 if (empty($topPhotos)) {
     header('Location: index.php');

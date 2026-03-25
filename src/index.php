@@ -19,24 +19,9 @@ include 'header.php';
         <h3>🏆 Top 20 Meest Gelikete Foto's</h3>
         <div class="top-posters">
             <?php
-            $stmt = $pdo->query(
-                "SELECT
-                    p.id,
-                    p.image_url,
-                    p.description,
-                    p.created_at,
-                    u.username,
-                    COUNT(v.id) AS like_count
-                FROM posts p
-                JOIN users u ON u.id = p.user_id
-                LEFT JOIN votes v ON v.post_id = p.id AND v.vote_type = 'like'
-                GROUP BY p.id, p.image_url, p.description, p.created_at, u.username
-                ORDER BY like_count DESC, p.id DESC
-                
-                LIMIT 20"
-            );
+            $topPosts = ff_get_top_posts(20);
             $rank = 1;
-            while ($row = $stmt->fetch()): ?>
+            foreach ($topPosts as $row): ?>
                 <div class="photo-rank">
                     <span class="rank">#<?php echo $rank++; ?></span>
                     <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="Top foto" class="photo-rank-thumb">
@@ -45,7 +30,7 @@ include 'header.php';
                         <span><?php echo (int) $row['like_count']; ?> likes</span>
                     </div>
                 </div>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </div>
 
         <div class="leaderboard-download">

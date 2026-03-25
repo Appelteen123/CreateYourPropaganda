@@ -25,13 +25,7 @@ if ($post_id <= 0 || !in_array($type, ['like', 'dislike'], true)) {
 	exit;
 }
 
-// Verwijder oude stem van deze gebruiker op deze post (indien aanwezig)
-$stmt = $pdo->prepare("DELETE FROM votes WHERE user_id = ? AND post_id = ?");
-$stmt->execute([$user_id, $post_id]);
-
-// Voeg nieuwe stem toe
-$stmt = $pdo->prepare("INSERT INTO votes (user_id, post_id, vote_type) VALUES (?, ?, ?)");
-$stmt->execute([$user_id, $post_id, $type]);
+ff_set_vote($user_id, $post_id, $type);
 
 header('Location: ' . $redirectTo);
 exit;

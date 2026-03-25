@@ -7,25 +7,7 @@ $posts = [];
 $currentUserId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
 
 try {
-	$stmt = $pdo->prepare(
-		"SELECT
-			p.id,
-			p.user_id,
-			p.image_url,
-			p.description,
-			p.created_at,
-			u.username,
-			COALESCE(SUM(CASE WHEN v.vote_type = 'like' THEN 1 ELSE 0 END), 0) AS like_count,
-			COALESCE(SUM(CASE WHEN v.vote_type = 'dislike' THEN 1 ELSE 0 END), 0) AS dislike_count,
-			MAX(CASE WHEN v.user_id = :current_user THEN v.vote_type ELSE NULL END) AS user_vote
-		FROM posts p
-		JOIN users u ON u.id = p.user_id
-		LEFT JOIN votes v ON v.post_id = p.id
-		GROUP BY p.id, p.user_id, p.image_url, p.description, p.created_at, u.username
-		ORDER BY p.id DESC"
-	);
-	$stmt->execute(['current_user' => $currentUserId]);
-	$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$posts = ff_get_posts_with_stats($currentUserId);
 } catch (Exception $e) {
 	$posts = [];
 }

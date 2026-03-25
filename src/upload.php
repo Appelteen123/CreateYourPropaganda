@@ -23,20 +23,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		if ($imageInfo === false || !in_array($imageInfo['mime'], $allowedMimeTypes, true)) {
 			$error = 'Alleen JPG, PNG, GIF of WEBP afbeeldingen zijn toegestaan.';
 		} else {
-			$uploadDir = __DIR__ . '/uploads';
+			$uploadDir = getenv('UPLOAD_DIR_ABS') ?: (__DIR__ . '/uploads');
+			$uploadUrlPrefix = trim((string) (getenv('UPLOAD_URL_PREFIX') ?: 'uploads'), '/');
 			if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true)) {
 				$error = 'Uploadmap kon niet worden aangemaakt.';
 			} else {
 				$extension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
 				$fileName = uniqid('foto_', true) . '.' . $extension;
 				$targetPath = $uploadDir . '/' . $fileName;
-				$dbPath = 'uploads/' . $fileName;
+				$dbPath = $uploadUrlPrefix . '/' . $fileName;
 
 				if (!move_uploaded_file($_FILES['image']['tmp_name'], $targetPath)) {
 					$error = 'Opslaan van de foto is mislukt.';
 				} else {
-					$stmt = $pdo->prepare("INSERT INTO posts (user_id, image_url, description) VALUES (?, ?, ?)");
-					if ($stmt->execute([$_SESSION['user_id'], $dbPath, $description])) {
+					if (ff_create_post($_SESSION['user_id'], $dbPath, $description)) {
 						$success = 'Foto succesvol gepost!';
 					} else {
 						@unlink($targetPath);

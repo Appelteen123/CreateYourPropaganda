@@ -38,16 +38,11 @@ include 'header.php';
 
             <div class="tab-content active" id="stickers-tab">
                 <div class="stickers-container">
-                    <img src="stickers/COMMUNISM.png" class="sticker" alt="Sticker COMMUNISM">
-                    <img src="stickers/1.png" class="sticker" alt="Sticker 1">
-                    <img src="stickers/2.png" class="sticker" alt="Sticker 2">
-                    <img src="stickers/3.png" class="sticker" alt="Sticker 3">
-                    <img src="stickers/4.png" class="sticker" alt="Sticker 4">
-                    <img src="stickers/5.png" class="sticker" alt="Sticker 5">
-                    <img src="stickers/6.png" class="sticker" alt="Sticker 6">
-                    <img src="stickers/7.png" class="sticker" alt="Sticker 7">
-                    <img src="stickers/8.png" class="sticker" alt="Sticker 8">
-                    <img src="stickers/9.png" class="sticker" alt="Sticker 9">
+                    <?php
+                    $allStickers = ff_get_all_stickers();
+                    foreach ($allStickers as $sticker): ?>
+                        <img src="<?php echo htmlspecialchars($sticker['path']); ?>" class="sticker" alt="Sticker <?php echo htmlspecialchars($sticker['name']); ?>">
+                    <?php endforeach; ?>
                     <img src="stickers/10.png" class="sticker" alt="Sticker 10">
                     <img src="stickers/11.png" class="sticker" alt="Sticker 11">
                 </div>

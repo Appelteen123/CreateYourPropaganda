@@ -194,4 +194,32 @@ function ff_get_top_posts($limit = 20)
 ff_ensure_file(ff_storage_file('users'));
 ff_ensure_file(ff_storage_file('posts'));
 ff_ensure_file(ff_storage_file('votes'));
+
+function ff_get_all_stickers()
+{
+	$stickersDir = __DIR__ . '/stickers';
+	$stickers = [];
+
+	if (!is_dir($stickersDir)) {
+		return $stickers;
+	}
+
+	$files = array_diff(scandir($stickersDir) ?: [], ['.', '..']);
+	foreach ($files as $file) {
+		$fullPath = $stickersDir . '/' . $file;
+		if (is_file($fullPath) && preg_match('/\.(png|jpg|jpeg|gif|webp)$/i', $file)) {
+			$stickers[] = [
+				'name' => pathinfo($file, PATHINFO_FILENAME),
+				'path' => 'stickers/' . $file,
+				'file' => $file,
+			];
+		}
+	}
+
+	usort($stickers, function ($a, $b) {
+		return strcasecmp($a['file'], $b['file']);
+	});
+
+	return $stickers;
+}
 ?>

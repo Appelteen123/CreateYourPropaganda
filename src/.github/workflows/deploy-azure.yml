@@ -1,0 +1,43 @@
+name: Deploy PHP app to Azure Web App (src)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - '.github/workflows/deploy-azure.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Lint PHP in src
+        run: find src -name "*.php" -print0 | xargs -0 -n1 php -l
+
+      - name: Login to Azure (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_EF4931960E6A48658D4E6E549AADA874 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7FC0FC295C5A4B44895072C7CEB2356C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_C29B17517D9745198C3C109A7E6B3D18 }}
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: goednieuws
+          slot-name: Production
+          package: ./src

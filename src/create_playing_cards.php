@@ -2,6 +2,7 @@
 $pageTitle = 'Create Your Playing Cards';
 $favicon = 'stickers/Logo MYOP.png';
 $extraStyles = ['create.css'];
+include 'db.php';
 include 'header.php';
 ?>
 
@@ -43,8 +44,6 @@ include 'header.php';
                     foreach ($allStickers as $sticker): ?>
                         <img src="<?php echo htmlspecialchars($sticker['path']); ?>" class="sticker" alt="Sticker <?php echo htmlspecialchars($sticker['name']); ?>">
                     <?php endforeach; ?>
-                    <img src="stickers/10.png" class="sticker" alt="Sticker 10">
-                    <img src="stickers/11.png" class="sticker" alt="Sticker 11">
                 </div>
             </div>
 

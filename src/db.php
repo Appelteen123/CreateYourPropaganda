@@ -16,8 +16,19 @@ function ff_storage_file($name)
 function ff_ensure_file($path)
 {
 	if (!is_file($path)) {
-		file_put_contents($path, json_encode([], JSON_PRETTY_PRINT));
+		$dir = dirname($path);
+		if (!is_dir($dir)) {
+			if (!mkdir($dir, 0777, true)) {
+				error_log("Failed to create directory: $dir");
+				return false;
+			}
+		}
+		if (!file_put_contents($path, json_encode([], JSON_PRETTY_PRINT))) {
+			error_log("Failed to create file: $path");
+			return false;
+		}
 	}
+	return true;
 }
 
 function ff_load_collection($name)
@@ -34,8 +45,23 @@ function ff_load_collection($name)
 function ff_save_collection($name, array $data)
 {
 	$path = ff_storage_file($name);
-	ff_ensure_file($path);
-	file_put_contents($path, json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), LOCK_EX);
+	if (!ff_ensure_file($path)) {
+		error_log("Could not ensure file exists: $path");
+		return false;
+	}
+	
+	$json = json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	if ($json === false) {
+		error_log("JSON encode failed for collection: $name");
+		return false;
+	}
+	
+	if (!file_put_contents($path, $json, LOCK_EX)) {
+		error_log("Failed to write collection to file: $path");
+		return false;
+	}
+	
+	return true;
 }
 
 function ff_next_id(array $items)
@@ -78,8 +104,11 @@ function ff_create_user($username, $passwordHash)
 		'created_at' => date('Y-m-d H:i:s'),
 	];
 
-	ff_save_collection('users', $users);
-	return true;
+	$result = ff_save_collection('users', $users);
+	if (!$result) {
+		error_log("Failed to save user: $username");
+	}
+	return $result;
 }
 
 function ff_create_post($userId, $imageUrl, $description)
@@ -92,8 +121,11 @@ function ff_create_post($userId, $imageUrl, $description)
 		'description' => $description,
 		'created_at' => date('Y-m-d H:i:s'),
 	];
-	ff_save_collection('posts', $posts);
-	return true;
+	$result = ff_save_collection('posts', $posts);
+	if (!$result) {
+		error_log("Failed to save post for user: $userId");
+	}
+	return $result;
 }
 
 function ff_set_vote($userId, $postId, $type)
@@ -116,8 +148,11 @@ function ff_set_vote($userId, $postId, $type)
 		'created_at' => date('Y-m-d H:i:s'),
 	];
 
-	ff_save_collection('votes', $filtered);
-	return true;
+	$result = ff_save_collection('votes', $filtered);
+	if (!$result) {
+		error_log("Failed to save vote: user=$userId, post=$postId, type=$type");
+	}
+	return $result;
 }
 
 function ff_get_posts_with_stats($currentUserId = 0)

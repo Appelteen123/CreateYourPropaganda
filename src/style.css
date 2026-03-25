@@ -1,0 +1,140 @@
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg: #f3f4f6;
+    --text: #1f2937;
+    --white: #ffffff;
+}
+
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
+
+/* Navigatie */
+nav { background: var(--white); box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 1rem 0; }
+.nav-container { max-width: 1000px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 1rem; }
+.logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--primary); }
+.menu a { text-decoration: none; color: var(--text); margin-left: 1.5rem; font-weight: 500; }
+.btn-auth { background: var(--primary); color: white !important; padding: 0.5rem 1rem; border-radius: 8px; }
+
+/* Algemene Container */
+.container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+
+/* Hero Sectie */
+.hero { text-align: center; padding: 3rem 0; }
+.btn { background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; display: inline-block; margin-top: 1rem; }
+.page-hero { padding: 1.5rem 0 2rem; }
+
+/* Leaderboard */
+.leaderboard { background: var(--white); padding: 2rem; border-radius: 12px; margin-top: 2rem; }
+.top-posters { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; }
+.poster-rank { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+.rank { color: var(--primary); font-weight: bold; }
+.photo-rank {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.photo-rank-thumb {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.photo-rank-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.photo-rank-info span { color: #6b7280; font-size: 0.9rem; }
+.leaderboard-download {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+/* Forms (Login/Register/Upload) */
+form { background: var(--white); padding: 2rem; border-radius: 12px; max-width: 400px; margin: 2rem auto; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+input, textarea { width: 100%; padding: 0.8rem; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+button { width: 100%; padding: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+button:hover { background: var(--primary-hover); }
+
+/* Auth pagina's */
+.auth-wrapper { max-width: 520px; margin-top: 3rem; }
+.auth-form { max-width: none; margin: 0 auto; box-shadow: 0 10px 24px rgba(31, 41, 55, 0.08); }
+.auth-title { margin: 0; font-size: 1.8rem; color: var(--text); }
+.auth-subtitle { margin: 0.5rem 0 1.5rem; color: #6b7280; font-size: 0.95rem; }
+.auth-form label { display: block; margin-top: 0.8rem; font-weight: 600; font-size: 0.95rem; }
+.auth-form input:focus, .auth-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+.auth-message { border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1rem; font-size: 0.92rem; }
+.auth-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.auth-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.auth-link { text-align: center; margin: 1rem 0 0; font-size: 0.92rem; }
+.auth-link a, .auth-message a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.auth-link a:hover, .auth-message a:hover { text-decoration: underline; }
+
+/* Feed & Posts */
+.post-card { background: var(--white); border-radius: 12px; margin-bottom: 2rem; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.post-card img { width: 100%; height: auto; }
+.post-content { padding: 1.5rem; }
+.post-content h3 { margin: 0 0 0.5rem; }
+.post-content p { margin: 0.4rem 0; }
+.post-meta { font-size: 0.92rem; color: #6b7280; }
+.vote-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.9rem;
+}
+.vote-counts {
+    display: flex;
+    gap: 0.7rem;
+    font-size: 0.92rem;
+    color: #4b5563;
+}
+.vote-form {
+    background: transparent;
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    max-width: none;
+}
+.vote-btn {
+    width: auto;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.88rem;
+}
+.active-like { background: #16a34a; }
+.active-dislike { background: #dc2626; }
+.vote-login-link {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+.vote-login-link:hover { text-decoration: underline; }
+
+/* Algemene pagina panelen */
+.page-panel {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.page-panel h3 { margin-top: 0; }
+.empty-state { text-align: center; }
+
+/* Upload pagina */
+.upload-form { max-width: 640px; margin: 0 auto; box-shadow: none; padding: 0; }
+.upload-form h3 { margin-top: 0; margin-bottom: 1rem; }
+.upload-form label { display: block; margin-top: 0.8rem; font-weight: 600; }
+.upload-form textarea { resize: vertical; }
+.upload-form input[type="file"] {
+    background: #fafafa;
+    border: 1px dashed #cbd5e1;
+    padding: 0.8rem;
+}

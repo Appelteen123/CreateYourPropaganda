@@ -47,11 +47,27 @@ De app maakt automatisch:
 - JSON-bestanden voor users/posts/votes
 - Uploadmap op `/home/site/wwwroot/uploads` (als die nog niet bestaat)
 
-## 5) Belangrijke beperking
+## 5) Opslag controleren (aanrader)
+
+Voordat je bezoekers toelaat: draai `php scripts/debug-auth.php` vanuit de root van de app (bijv. via Kudu/SSH). Dit script:
+
+- checkt of de ingestelde opslagmap bestaat en beschrijfbaar is;
+- maakt tijdelijk een gebruiker aan;
+- controleert direct daarna of inloggen met dat account lukt.
+
+Je ziet meteen of de JSON-bestanden weg te schrijven zijn. Verwijder het testaccount eventueel uit `data/users.json`.
+
+## 6) Veelvoorkomende problemen
+
+- **Foutmelding bij registreren: “We konden je account niet opslaan.”** → controleer of `DATA_DIR_ABS` bestaat en beschrijfbaar is. De storage healthcheck in `scripts/debug-auth.php` geeft de exacte reden.
+- **Foutmelding bij uploaden: “Uploadmap kon niet worden aangemaakt.”** → controleer `UPLOAD_DIR_ABS` en zorg dat `/home/site/wwwroot/uploads` beschrijfbaar is.
+- **Loginpagina toont “De opslag is tijdelijk niet beschikbaar.”** → de healthcheck kan geen schrijfactie uitvoeren. Controleer permissies of schijfruimte.
+
+## 7) Belangrijke beperking
 
 Deze opslag is lokaal op 1 App Service instance. Dit is prima voor kleine projecten, maar niet ideaal voor zware schaal of meerdere instances.
 
-## 6) Optioneel: later upgraden
+## 8) Optioneel: later upgraden
 
 Als je later wilt opschalen, kun je overstappen naar:
 

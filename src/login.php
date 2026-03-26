@@ -3,12 +3,17 @@ include 'db.php';
 
 $error = '';
 
+$storageHealth = ff_cached_storage_healthcheck();
+if (!($storageHealth['ok'] ?? false)) {
+    $error = 'De opslag is tijdelijk niet beschikbaar. Probeer het later opnieuw.';
+}
+
 if (isset($_SESSION['user_id'])) {
     header('Location: feed.php');
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $error === '') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
 

@@ -3,6 +3,7 @@ include 'db.php';
 
 $success = '';
 $error = '';
+$formUsername = '';
 
 if (isset($_SESSION['user_id'])) {
     header('Location: feed.php');
@@ -11,6 +12,7 @@ if (isset($_SESSION['user_id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = trim($_POST['username'] ?? '');
+    $formUsername = $username;
     $password = $_POST['password'] ?? '';
 
     if ($username === '' || $password === '') {
@@ -18,10 +20,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-		if (ff_create_user($username, $hashedPassword)) {
+        $result = ff_create_user($username, $hashedPassword);
+        if ($result['ok'] ?? false) {
             $success = 'Account aangemaakt! Je kunt nu inloggen.';
+            $formUsername = '';
         } else {
-			$error = 'Gebruikersnaam bestaat al of registreren is mislukt.';
+            $code = $result['code'] ?? 'unknown';
+            if ($code === 'duplicate') {
+                $error = 'Deze gebruikersnaam is al bezet. Kies een andere naam.';
+            } elseif ($code === 'storage') {
+                $error = 'We konden je account niet opslaan. Probeer het later opnieuw.';
+            } else {
+                $error = 'Registreren is helaas mislukt. Probeer het nog eens.';
+            }
         }
     }
 }
@@ -43,7 +54,7 @@ include 'header.php';
         <?php endif; ?>
 
         <label for="username">Gebruikersnaam</label>
-        <input id="username" type="text" name="username" placeholder="Kies een gebruikersnaam" required>
+        <input id="username" type="text" name="username" placeholder="Kies een gebruikersnaam" value="<?php echo htmlspecialchars($formUsername); ?>" required>
 
         <label for="password">Wachtwoord</label>
         <input id="password" type="password" name="password" placeholder="Kies een sterk wachtwoord" required>

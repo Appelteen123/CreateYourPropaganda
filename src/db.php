@@ -1,25 +1,120 @@
 <?php
 session_start();
 
-function ff_detect_storage_dir()
+function ff_trimmed_path($path)
 {
+	return rtrim((string) $path, "/\\");
+}
+
+function ff_prepare_storage_dir($dir, &$failure = null)
+{
+	$normalized = ff_trimmed_path($dir);
+	if ($normalized === '') {
+		$failure = 'empty_path';
+		return false;
+	}
+
+	if (!is_dir($normalized) && !@mkdir($normalized, 0777, true)) {
+		$failure = 'mkdir_failed';
+		return false;
+	}
+
+	if (!is_writable($normalized)) {
+		$failure = 'not_writable';
+		return false;
+	}
+
+	return $normalized;
+}
+
+function ff_candidate_storage_dirs()
+{
+	$candidates = [];
+
 	$configuredDir = getenv('DATA_DIR_ABS');
 	if (is_string($configuredDir) && trim($configuredDir) !== '') {
-		return rtrim($configuredDir, '/\\');
+		$candidates[] = $configuredDir;
 	}
 
 	$azureHome = getenv('HOME');
 	if (is_string($azureHome) && trim($azureHome) !== '') {
-		return rtrim($azureHome, '/\\') . '/site/data/fotoforum';
+		$candidates[] = rtrim($azureHome, '/\\') . '/site/data/fotoforum';
 	}
 
-	return __DIR__ . '/data';
+	$candidates[] = __DIR__ . '/data';
+
+	return $candidates;
+}
+
+function ff_detect_storage_dir()
+{
+	$chosen = null;
+	$lastFailure = '';
+
+	foreach (ff_candidate_storage_dirs() as $candidate) {
+		$failure = null;
+		$attempt = ff_prepare_storage_dir($candidate, $failure);
+		if ($attempt !== false) {
+			$chosen = $attempt;
+			break;
+		}
+		$lastFailure = $failure ?: 'unknown';
+		error_log("FotoForum storage candidate rejected ({$lastFailure}): {$candidate}");
+	}
+
+	if ($chosen === null) {
+		$fallback = __DIR__ . '/data';
+		$chosen = ff_prepare_storage_dir($fallback, $lastFailure) ?: $fallback;
+	}
+
+	return $chosen;
 }
 
 $storageDir = ff_detect_storage_dir();
 
-if (!is_dir($storageDir)) {
-	mkdir($storageDir, 0777, true);
+function ff_storage_healthcheck()
+{
+	global $storageDir;
+	$dir = $storageDir;
+
+	$result = [
+		'dir' => $dir,
+		'exists' => is_dir($dir),
+		'writable' => is_writable($dir),
+		'probe' => false,
+		'probe_error' => null,
+	];
+
+	if ($result['exists'] && $result['writable']) {
+		$probeFile = $dir . '/.ff_probe_' . uniqid('', true) . '.tmp';
+		$payload = (string) microtime(true);
+		$bytes = @file_put_contents($probeFile, $payload);
+		if ($bytes === false) {
+			$result['probe_error'] = 'write_failed';
+		} else {
+			$read = @file_get_contents($probeFile);
+			$result['probe'] = ($read === $payload);
+			if (!$result['probe']) {
+				$result['probe_error'] = 'read_mismatch';
+			}
+			@unlink($probeFile);
+		}
+	} else {
+		$result['probe_error'] = $result['exists'] ? 'not_writable' : 'missing_dir';
+	}
+
+	$result['ok'] = $result['exists'] && $result['writable'] && $result['probe'] && !$result['probe_error'];
+
+	return $result;
+}
+
+function ff_cached_storage_healthcheck()
+{
+	static $cache = null;
+	if ($cache === null) {
+		$cache = ff_storage_healthcheck();
+	}
+	return $cache;
 }
 
 function ff_storage_file($name)
@@ -86,22 +181,46 @@ function ff_save_collection($name, array $data)
 {
 	$path = ff_storage_file($name);
 	if (!ff_ensure_file($path)) {
-		error_log("Could not ensure file exists: $path");
-		return false;
+		$message = "Could not ensure file exists: $path";
+		error_log($message);
+		return [
+			'ok' => false,
+			'code' => 'ensure',
+			'message' => $message,
+			'path' => $path,
+		];
 	}
-	
+
 	$json = json_encode(array_values($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 	if ($json === false) {
-		error_log("JSON encode failed for collection: $name");
-		return false;
+		$message = "JSON encode failed for collection: $name";
+		error_log($message);
+		return [
+			'ok' => false,
+			'code' => 'json',
+			'message' => $message,
+			'path' => $path,
+		];
 	}
-	
-	if (!file_put_contents($path, $json, LOCK_EX)) {
-		error_log("Failed to write collection to file: $path");
-		return false;
+
+	$bytes = @file_put_contents($path, $json, LOCK_EX);
+	if ($bytes === false) {
+		$message = "Failed to write collection to file: $path";
+		error_log($message);
+		return [
+			'ok' => false,
+			'code' => 'write',
+			'message' => $message,
+			'path' => $path,
+			'health' => ff_storage_healthcheck(),
+		];
 	}
-	
-	return true;
+
+	return [
+		'ok' => true,
+		'path' => $path,
+		'count' => count($data),
+	];
 }
 
 function ff_next_id(array $items)
@@ -133,22 +252,37 @@ function ff_create_user($username, $passwordHash)
 
 	foreach ($users as $user) {
 		if (($user['username'] ?? '') === $username) {
-			return false;
+			return [
+				'ok' => false,
+				'code' => 'duplicate',
+				'message' => 'Username already exists.',
+			];
 		}
 	}
 
-	$users[] = [
+	$newUser = [
 		'id' => ff_next_id($users),
 		'username' => $username,
 		'password' => $passwordHash,
 		'created_at' => date('Y-m-d H:i:s'),
 	];
+	$users[] = $newUser;
 
 	$result = ff_save_collection('users', $users);
-	if (!$result) {
-		error_log("Failed to save user: $username");
+	if (!$result['ok']) {
+		error_log('Failed to save user: ' . $username . ' (' . ($result['code'] ?? 'unknown') . ')');
+		return [
+			'ok' => false,
+			'code' => 'storage',
+			'message' => 'Failed to persist user.',
+			'details' => $result,
+		];
 	}
-	return $result;
+
+	return [
+		'ok' => true,
+		'user' => $newUser,
+	];
 }
 
 function ff_create_post($userId, $imageUrl, $description)
@@ -162,10 +296,11 @@ function ff_create_post($userId, $imageUrl, $description)
 		'created_at' => date('Y-m-d H:i:s'),
 	];
 	$result = ff_save_collection('posts', $posts);
-	if (!$result) {
-		error_log("Failed to save post for user: $userId");
+	if (!$result['ok']) {
+		error_log('Failed to save post for user: ' . $userId . ' (' . ($result['code'] ?? 'unknown') . ')');
+		return false;
 	}
-	return $result;
+	return true;
 }
 
 function ff_set_vote($userId, $postId, $type)
@@ -189,10 +324,12 @@ function ff_set_vote($userId, $postId, $type)
 	];
 
 	$result = ff_save_collection('votes', $filtered);
-	if (!$result) {
-		error_log("Failed to save vote: user=$userId, post=$postId, type=$type");
+	if (!$result['ok']) {
+		error_log('Failed to save vote: user=' . $userId . ', post=' . $postId . ', type=' . $type . ' (' . ($result['code'] ?? 'unknown') . ')');
+		return false;
 	}
-	return $result;
+
+	return true;
 }
 
 function ff_get_posts_with_stats($currentUserId = 0)

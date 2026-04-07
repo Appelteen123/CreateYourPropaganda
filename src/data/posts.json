@@ -5,5 +5,12 @@
         "image_url": "uploads/design_69d509f4e4fc66.16782452.png",
         "description": "Hee",
         "created_at": "2026-04-07 15:43:16"
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "image_url": "uploads/design_69d50de211f907.18334092.png",
+        "description": "-",
+        "created_at": "2026-04-07 16:00:02"
     }
 ]

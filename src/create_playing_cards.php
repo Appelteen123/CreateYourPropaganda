@@ -34,6 +34,7 @@ include 'header.php';
             <div class="sidebar-tabs">
                 <button class="tab-btn active" data-tab="stickers" type="button">🎨 Stickers</button>
                 <button class="tab-btn" data-tab="tools" type="button">⚙️ Tools</button>
+                <button class="tab-btn" data-tab="card" type="button">🃏 Kaart</button>
                 <button class="tab-btn" data-tab="background" type="button">🎨 Achtergrond</button>
             </div>
 
@@ -92,15 +93,38 @@ include 'header.php';
                 <button id="deleteSelected" class="tool-btn" type="button" disabled>🗑️ Verwijderen</button>
             </div>
 
+            <div class="tab-content" id="card-tab">
+                <h4>Kleur Bovenste Bol</h4>
+                <div class="card-color-row">
+                    <button type="button" class="card-color-btn active" data-color="#16a34a" aria-label="Groen"></button>
+                    <button type="button" class="card-color-btn" data-color="#dc2626" aria-label="Rood"></button>
+                    <button type="button" class="card-color-btn" data-color="#2563eb" aria-label="Blauw"></button>
+                </div>
+
+                <h4>Punten</h4>
+                <input type="text" id="cardPointsInput" value="+1" placeholder="Bijv. -6 of +1">
+
+                <h4>Beschrijving</h4>
+                <textarea id="cardTextInput" rows="3" placeholder="Beschrijving onderaan de kaart..."></textarea>
+                <p class="hint">Deze velden worden direct op de kaart geplaatst.</p>
+            </div>
+
             <div class="tab-content" id="background-tab">
                 <h4>Achtergrondkleur</h4>
                 <input type="color" id="bgColor" value="#ffffff">
-                <p class="hint">Klik op een kleur om te selecteren</p>
+                <p class="hint">Deze kleur wordt alleen toegepast op het design-vak.</p>
             </div>
         </aside>
 
         <div class="canvas-container">
-            <div id="canvas" data-download-name="playing-cards-design.png"></div>
+            <div id="canvas" data-mode="card" data-download-name="playing-cards-design.png">
+                <div class="playing-card-shell">
+                    <div id="cardColorDot" class="card-color-dot" style="background:#16a34a;"></div>
+                    <div id="cardPointsBadge" class="card-points-badge"><span id="cardPointsValue">+1</span></div>
+                    <div id="cardDesignBox" class="card-design-box"></div>
+                    <p id="cardDescriptionText" class="card-description-text">Voeg een beschrijving toe in het Kaart-tabje.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

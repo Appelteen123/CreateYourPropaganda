@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
 const canvas = document.getElementById("canvas")
+const isCardMode = canvas && canvas.dataset.mode === "card"
+const designSurface = isCardMode ? (document.getElementById("cardDesignBox") || canvas) : canvas
 let selectedItem = null
 let selectedItems = new Set()
 let selectMode = false
@@ -43,8 +45,8 @@ stickers.forEach((sticker) => {
     let img = document.createElement("img")
     img.src = sticker.src
     img.classList.add("canvas-item")
-    img.style.left = "100px"
-    img.style.top = "100px"
+    img.style.left = isCardMode ? "20px" : "100px"
+    img.style.top = isCardMode ? "20px" : "100px"
     img.style.width = "120px"
     img.style.height = "120px"
     img.style.transform = "rotate(0deg) scaleX(1) scaleY(1)"
@@ -52,9 +54,43 @@ stickers.forEach((sticker) => {
     img.dataset.flipX = "1"
     img.dataset.flipY = "1"
     makeDraggable(img)
-    canvas.appendChild(img)
+    designSurface.appendChild(img)
   })
 })
+
+if (isCardMode) {
+  const cardColorDot = document.getElementById("cardColorDot")
+  const cardPointsInput = document.getElementById("cardPointsInput")
+  const cardPointsValue = document.getElementById("cardPointsValue")
+  const cardTextInput = document.getElementById("cardTextInput")
+  const cardDescriptionText = document.getElementById("cardDescriptionText")
+  const colorButtons = document.querySelectorAll(".card-color-btn")
+
+  colorButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selectedColor = button.dataset.color || "#16a34a"
+      if (cardColorDot) {
+        cardColorDot.style.background = selectedColor
+      }
+      colorButtons.forEach((b) => b.classList.remove("active"))
+      button.classList.add("active")
+    })
+  })
+
+  if (cardPointsInput && cardPointsValue) {
+    cardPointsInput.addEventListener("input", () => {
+      const value = cardPointsInput.value.trim()
+      cardPointsValue.textContent = value || "+1"
+    })
+  }
+
+  if (cardTextInput && cardDescriptionText) {
+    cardTextInput.addEventListener("input", () => {
+      const value = cardTextInput.value.trim()
+      cardDescriptionText.textContent = value || "Voeg een beschrijving toe in het Kaart-tabje."
+    })
+  }
+}
 
 document.getElementById("addText").onclick = () => {
   let text = prompt("Welke tekst wil je toevoegen?")
@@ -72,7 +108,7 @@ document.getElementById("addText").onclick = () => {
   div.dataset.flipX = "1"
   div.dataset.flipY = "1"
   makeDraggable(div)
-  canvas.appendChild(div)
+  designSurface.appendChild(div)
 }
 
 document.getElementById("flipHorizontal").onclick = () => {
@@ -141,7 +177,11 @@ zoomSlider.addEventListener("input", (e) => {
 setCanvasZoom(100)
 
 document.getElementById("bgColor").addEventListener("input", (e) => {
-  canvas.style.backgroundColor = e.target.value
+  if (isCardMode) {
+    designSurface.style.backgroundColor = e.target.value
+  } else {
+    canvas.style.backgroundColor = e.target.value
+  }
 })
 
 document.getElementById("rulesToggle").addEventListener("click", () => {
@@ -163,7 +203,7 @@ document.addEventListener("keydown", (e) => {
 })
 
 canvas.addEventListener("click", (e) => {
-  if (e.target === canvas) {
+  if (e.target === canvas || e.target === designSurface) {
     deselectItem()
   }
 })
@@ -392,7 +432,7 @@ function makeDraggable(el) {
   el.onmousedown = function (e) {
     if (e.target.classList.contains("handle")) return
 
-    const rect = canvas.getBoundingClientRect()
+    const rect = designSurface.getBoundingClientRect()
     const startX = (e.clientX - rect.left) / canvasZoom
     const startY = (e.clientY - rect.top) / canvasZoom
 

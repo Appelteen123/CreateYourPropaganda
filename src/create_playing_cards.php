@@ -51,6 +51,12 @@ include 'header.php';
                 <button id="addText" class="tool-btn" type="button">📝 Voeg Tekst Toe</button>
                 <button id="savePNG" class="tool-btn" type="button">💾 Download als PNG</button>
 
+                <h4>Post Je Ontwerp</h4>
+                <label for="postDescription" class="hint">Beschrijving</label>
+                <textarea id="postDescription" rows="3" placeholder="Vertel iets over je ontwerp..."></textarea>
+                <button id="postDesignBtn" class="tool-btn" type="button">📤 Post naar feed</button>
+                <p id="postStatus" class="hint"></p>
+
                 <h4>Selectie Modus</h4>
                 <button id="toggleSelectMode" class="tool-btn select-mode-btn" type="button">🖱️ Select Mode aan</button>
                 <p class="hint" id="selectModeHint">Klik op items om te selecteren. Shift+Click voor meerdere.</p>

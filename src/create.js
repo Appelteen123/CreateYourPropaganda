@@ -168,23 +168,78 @@ canvas.addEventListener("click", (e) => {
   }
 })
 
-document.getElementById("savePNG").onclick = async () => {
+async function renderCanvasAsPng() {
   canvas.classList.add("exporting")
   const oldTransform = canvas.style.transform
-  const downloadName = canvas.dataset.downloadName || "propaganda-poster.png"
   canvas.style.transform = "none"
   try {
-    const exportedCanvas = await html2canvas(canvas, { backgroundColor: null, scale: 2, useCORS: true })
+    return await html2canvas(canvas, { backgroundColor: null, scale: 2, useCORS: true })
+  } finally {
+    canvas.style.transform = oldTransform
+    canvas.classList.remove("exporting")
+  }
+}
+
+document.getElementById("savePNG").onclick = async () => {
+  const downloadName = canvas.dataset.downloadName || "propaganda-poster.png"
+  try {
+    const exportedCanvas = await renderCanvasAsPng()
     const link = document.createElement("a")
     link.download = downloadName
     link.href = exportedCanvas.toDataURL("image/png")
     link.click()
   } catch (error) {
     alert("Fout bij exporteren: " + error.message)
-  } finally {
-    canvas.style.transform = oldTransform
-    canvas.classList.remove("exporting")
   }
+}
+
+const postButton = document.getElementById("postDesignBtn")
+if (postButton) {
+  postButton.addEventListener("click", async () => {
+    const statusEl = document.getElementById("postStatus")
+    const descriptionEl = document.getElementById("postDescription")
+    const description = descriptionEl ? descriptionEl.value.trim() : ""
+
+    statusEl.textContent = "Bezig met posten..."
+    statusEl.classList.remove("error", "success")
+    postButton.disabled = true
+
+    try {
+      const exportedCanvas = await renderCanvasAsPng()
+      const blob = await new Promise((resolve) => exportedCanvas.toBlob(resolve, "image/png"))
+
+      if (!blob) {
+        throw new Error("Kon geen afbeelding maken van je ontwerp.")
+      }
+
+      const formData = new FormData()
+      formData.append("description", description)
+      formData.append("from_designer", "1")
+      formData.append("image", blob, "design.png")
+
+      const response = await fetch("upload.php", {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Posten is mislukt.")
+      }
+
+      statusEl.textContent = "Ontwerp gepost! Je wordt doorgestuurd naar de feed..."
+      statusEl.classList.add("success")
+      setTimeout(() => {
+        window.location.href = data.redirect || "feed.php"
+      }, 900)
+    } catch (error) {
+      statusEl.textContent = error.message || "Posten is mislukt."
+      statusEl.classList.add("error")
+    } finally {
+      postButton.disabled = false
+    }
+  })
 }
 
 function updateToolButtons() {

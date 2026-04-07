@@ -22,9 +22,9 @@ try {
 	<?php if (empty($posts)): ?>
 		<section class="page-panel empty-state">
 			<h3>Nog geen foto's geplaatst</h3>
-			<p>Upload als eerste een foto om de feed te vullen.</p>
+			<p>Maak als eerste een ontwerp om de feed te vullen.</p>
 			<?php if (isset($_SESSION['user_id'])): ?>
-				<a href="upload.php" class="btn">Plaats een foto</a>
+				<a href="create.php" class="btn">Maak en post een ontwerp</a>
 			<?php else: ?>
 				<a href="login.php" class="btn">Log in om te posten</a>
 			<?php endif; ?>

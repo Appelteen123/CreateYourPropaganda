@@ -293,6 +293,30 @@
   margin: 0.2rem 0 0;
 }
 
+.create-page #postDescription {
+  width: 100%;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #0b152a;
+  color: #f8fafc;
+  padding: 10px;
+  resize: vertical;
+}
+
+.create-page #postDescription::placeholder {
+  color: #94a3b8;
+}
+
+.create-page #postStatus.success {
+  color: #86efac;
+}
+
+.create-page #postStatus.error {
+  color: #fca5a5;
+}
+
 .create-page .canvas-container {
   display: flex;
   justify-content: center;

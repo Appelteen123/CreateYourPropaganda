@@ -31,7 +31,6 @@ $extraStyles = $extraStyles ?? [];
             <a href="create.php">Create</a>
 
             <?php if(isset($_SESSION['user_id'])): ?>
-                <a href="upload.php">Foto Uploaden</a>
                 <a href="logout.php" class="btn-auth">Uitloggen</a>
             <?php else: ?>
                 <a href="login.php">Inloggen</a>

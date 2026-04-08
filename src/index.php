@@ -34,6 +34,7 @@ include 'header.php';
         </div>
 
         <div class="leaderboard-download">
+            <a href="live_collage.php" class="btn">Open Live Top 5 Collage</a>
             <a href="download_top20.php" class="btn">Download top 20 als ZIP</a>
         </div>
     </section>

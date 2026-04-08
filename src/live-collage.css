@@ -1,0 +1,129 @@
+body {
+    background: #0b1220;
+    color: #e5e7eb;
+}
+
+.live-collage-page {
+    max-width: 1500px;
+    margin: 1.2rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.live-collage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.live-collage-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: #f8fafc;
+}
+
+.live-collage-header p {
+    margin: 0.35rem 0 0;
+    color: #93c5fd;
+}
+
+.live-collage-actions {
+    display: flex;
+    gap: 0.7rem;
+}
+
+.collage-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border: 1px solid #2563eb;
+    border-radius: 10px;
+    background: #1d4ed8;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0.65rem 0.95rem;
+    cursor: pointer;
+}
+
+.collage-btn.secondary {
+    background: #0f172a;
+    border-color: #334155;
+}
+
+.collage-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.collage-card {
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    position: relative;
+}
+
+.collage-rank {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid #475569;
+    border-radius: 999px;
+    padding: 0.3rem 0.55rem;
+    font-weight: 800;
+    color: #f8fafc;
+    z-index: 2;
+}
+
+.collage-card img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+}
+
+.collage-meta {
+    padding: 0.8rem;
+}
+
+.collage-meta h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #f8fafc;
+}
+
+.collage-meta p {
+    margin: 0.3rem 0 0;
+    color: #93c5fd;
+    font-weight: 700;
+}
+
+.collage-empty {
+    background: #111827;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+}
+
+@media (max-width: 1280px) {
+    .collage-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 860px) {
+    .live-collage-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .collage-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

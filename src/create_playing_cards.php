@@ -42,9 +42,13 @@ include 'header.php';
                 <div class="stickers-container">
                     <?php
                     $allStickers = ff_get_all_stickers();
-                    foreach ($allStickers as $sticker): ?>
+                    $cardStickers = array_slice($allStickers, 0, 1);
+                    foreach ($cardStickers as $sticker): ?>
                         <img src="<?php echo htmlspecialchars($sticker['path']); ?>" class="sticker" alt="Sticker <?php echo htmlspecialchars($sticker['name']); ?>">
                     <?php endforeach; ?>
+                    <?php if (empty($cardStickers)): ?>
+                        <p class="hint">Geen stickers gevonden.</p>
+                    <?php endif; ?>
                 </div>
             </div>
 

@@ -19,5 +19,12 @@
         "image_url": "uploads/design_69d634b11c8f74.88957146.png",
         "description": "The future Tech companies promised us in the early 2000s",
         "created_at": "2026-04-08 12:57:53"
+    },
+    {
+        "id": 4,
+        "user_id": 1,
+        "image_url": "uploads/design_69d63b9ed82f04.52625380.png",
+        "description": "",
+        "created_at": "2026-04-08 13:27:26"
     }
 ]

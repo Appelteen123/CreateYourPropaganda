@@ -97,19 +97,69 @@ include 'header.php';
             </div>
 
             <div class="tab-content" id="card-tab">
-                <h4>Kleur Bovenste Bol</h4>
+                <h4>Kies Kaartkleur</h4>
                 <div class="card-color-row">
-                    <button type="button" class="card-color-btn active" data-color="#16a34a" aria-label="Groen"></button>
-                    <button type="button" class="card-color-btn" data-color="#dc2626" aria-label="Rood"></button>
-                    <button type="button" class="card-color-btn" data-color="#2563eb" aria-label="Blauw"></button>
+                    <button type="button" class="card-color-btn active" data-theme="green" aria-label="Groen">Groen</button>
+                    <button type="button" class="card-color-btn" data-theme="red" aria-label="Rood">Rood</button>
                 </div>
 
-                <h4>Punten</h4>
-                <input type="text" id="cardPointsInput" value="+1" placeholder="Bijv. -6 of +1">
+                <div id="greenThemeInputs" class="theme-inputs active" data-theme="green">
+                    <h4>Groen: Bovenkant</h4>
+                    <label for="greenSourceInput">Bronlabel</label>
+                    <input type="text" id="greenSourceInput" data-target="cardSource" data-fallback="news" value="news">
 
-                <h4>Beschrijving</h4>
-                <textarea id="cardTextInput" rows="3" placeholder="Beschrijving onderaan de kaart..."></textarea>
-                <p class="hint">Deze velden worden direct op de kaart geplaatst.</p>
+                    <label for="greenTitleInput">Titel</label>
+                    <input type="text" id="greenTitleInput" data-target="cardTitle" data-fallback="SAMENWERKING TUSSEN GEMEENTEN" value="SAMENWERKING TUSSEN GEMEENTEN">
+
+                    <label for="greenQuoteInput">Beschrijving</label>
+                    <textarea id="greenQuoteInput" rows="3" data-target="cardQuote" data-fallback='"Jij en een rivaal schudden elkaar de hand, het volk gelooft weer even in de politiek."'>"Jij en een rivaal schudden elkaar de hand, het volk gelooft weer even in de politiek."</textarea>
+
+                    <h4>Groen: Onderaan</h4>
+                    <label for="greenStat1ValueInput">Punten 1</label>
+                    <input type="text" id="greenStat1ValueInput" data-target="cardStat1Value" data-fallback="+2" value="+2">
+                    <label for="greenStat1LabelInput">Tekst 1</label>
+                    <input type="text" id="greenStat1LabelInput" data-target="cardStat1Label" data-fallback="Publieke support" value="Publieke support">
+
+                    <label for="greenStat2ValueInput">Punten 2</label>
+                    <input type="text" id="greenStat2ValueInput" data-target="cardStat2Value" data-fallback="-1" value="-1">
+                    <label for="greenStat2LabelInput">Tekst 2</label>
+                    <input type="text" id="greenStat2LabelInput" data-target="cardStat2Label" data-fallback="Stemming" value="Stemming">
+
+                    <label for="greenStat3ValueInput">Punten 3</label>
+                    <input type="text" id="greenStat3ValueInput" data-target="cardStat3Value" data-fallback="0" value="0">
+                    <label for="greenStat3LabelInput">Tekst 3</label>
+                    <input type="text" id="greenStat3LabelInput" data-target="cardStat3Label" data-fallback="Angst-token" value="Angst-token">
+                </div>
+
+                <div id="redThemeInputs" class="theme-inputs" data-theme="red">
+                    <h4>Rood: Bovenkant</h4>
+                    <label for="redSourceInput">Bronlabel</label>
+                    <input type="text" id="redSourceInput" data-target="cardSource" data-fallback="NL-Alert" value="NL-Alert">
+
+                    <label for="redTitleInput">Titel</label>
+                    <input type="text" id="redTitleInput" data-target="cardTitle" data-fallback="MISDAADGOLF!" value="MISDAADGOLF!">
+
+                    <label for="redQuoteInput">Beschrijving</label>
+                    <textarea id="redQuoteInput" rows="3" data-target="cardQuote" data-fallback='"De straten zijn gevaarlijk, wees op je hoede! Gelukkig heb jij de oplossing wanneer de verkiezingen er zijn."'>"De straten zijn gevaarlijk, wees op je hoede! Gelukkig heb jij de oplossing wanneer de verkiezingen er zijn."</textarea>
+
+                    <h4>Rood: Onderaan</h4>
+                    <label for="redStat1ValueInput">Punten 1</label>
+                    <input type="text" id="redStat1ValueInput" data-target="cardStat1Value" data-fallback="+3" value="+3">
+                    <label for="redStat1LabelInput">Tekst 1</label>
+                    <input type="text" id="redStat1LabelInput" data-target="cardStat1Label" data-fallback="Publieke support" value="Publieke support">
+
+                    <label for="redStat2ValueInput">Punten 2</label>
+                    <input type="text" id="redStat2ValueInput" data-target="cardStat2Value" data-fallback="+1" value="+1">
+                    <label for="redStat2LabelInput">Tekst 2</label>
+                    <input type="text" id="redStat2LabelInput" data-target="cardStat2Label" data-fallback="Stemming" value="Stemming">
+
+                    <label for="redStat3ValueInput">Punten 3</label>
+                    <input type="text" id="redStat3ValueInput" data-target="cardStat3Value" data-fallback="+1" value="+1">
+                    <label for="redStat3LabelInput">Tekst 3</label>
+                    <input type="text" id="redStat3LabelInput" data-target="cardStat3Label" data-fallback="Angst-token" value="Angst-token">
+                </div>
+
+                <p class="hint">Per kleur vul je de tekstvakken in. Het midden blijft vrij om zelf te ontwerpen met stickers en tekst.</p>
             </div>
 
             <div class="tab-content" id="background-tab">
@@ -121,11 +171,29 @@ include 'header.php';
 
         <div class="canvas-container">
             <div id="canvas" data-mode="card" data-download-name="playing-cards-design.png">
-                <div class="playing-card-shell">
-                    <div id="cardColorDot" class="card-color-dot" style="background:#16a34a;"></div>
-                    <div id="cardPointsBadge" class="card-points-badge"><span id="cardPointsValue">+1</span></div>
+                <div id="playingCardShell" class="playing-card-shell theme-green">
+                    <div class="card-top-panel">
+                        <p id="cardSource" class="card-source">news</p>
+                        <h3 id="cardTitle" class="card-title">SAMENWERKING TUSSEN GEMEENTEN</h3>
+                        <p id="cardQuote" class="card-quote">"Jij en een rivaal schudden elkaar de hand, het volk gelooft weer even in de politiek."</p>
+                    </div>
+
                     <div id="cardDesignBox" class="card-design-box"></div>
-                    <p id="cardDescriptionText" class="card-description-text">Voeg een beschrijving toe in het Kaart-tabje.</p>
+
+                    <div class="card-stats-row">
+                        <div class="card-stat-col">
+                            <div id="cardStat1Value" class="card-stat-value">+2</div>
+                            <p id="cardStat1Label" class="card-stat-label">Publieke support</p>
+                        </div>
+                        <div class="card-stat-col">
+                            <div id="cardStat2Value" class="card-stat-value">-1</div>
+                            <p id="cardStat2Label" class="card-stat-label">Stemming</p>
+                        </div>
+                        <div class="card-stat-col">
+                            <div id="cardStat3Value" class="card-stat-value">0</div>
+                            <p id="cardStat3Label" class="card-stat-label">Angst-token</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

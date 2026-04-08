@@ -59,37 +59,67 @@ stickers.forEach((sticker) => {
 })
 
 if (isCardMode) {
-  const cardColorDot = document.getElementById("cardColorDot")
-  const cardPointsInput = document.getElementById("cardPointsInput")
-  const cardPointsValue = document.getElementById("cardPointsValue")
-  const cardTextInput = document.getElementById("cardTextInput")
-  const cardDescriptionText = document.getElementById("cardDescriptionText")
-  const colorButtons = document.querySelectorAll(".card-color-btn")
+  const shell = document.getElementById("playingCardShell")
+  const themeButtons = document.querySelectorAll(".card-color-btn")
+  const themePanels = document.querySelectorAll(".theme-inputs")
 
-  colorButtons.forEach((button) => {
+  function getFallback(input) {
+    return input.dataset.fallback || ""
+  }
+
+  function pushInputToCard(input) {
+    const targetId = input.dataset.target
+    if (!targetId) return
+
+    const target = document.getElementById(targetId)
+    if (!target) return
+
+    const value = input.value.trim()
+    target.textContent = value || getFallback(input)
+  }
+
+  function syncActiveThemeToCard() {
+    const activePanel = document.querySelector(".theme-inputs.active")
+    if (!activePanel) return
+
+    const inputs = activePanel.querySelectorAll("input[data-target], textarea[data-target]")
+    inputs.forEach((input) => pushInputToCard(input))
+  }
+
+  function applyTheme(theme) {
+    themeButtons.forEach((button) => {
+      button.classList.toggle("active", button.dataset.theme === theme)
+    })
+
+    themePanels.forEach((panel) => {
+      panel.classList.toggle("active", panel.dataset.theme === theme)
+    })
+
+    if (shell) {
+      shell.classList.toggle("theme-green", theme === "green")
+      shell.classList.toggle("theme-red", theme === "red")
+    }
+
+    syncActiveThemeToCard()
+  }
+
+  themeButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      const selectedColor = button.dataset.color || "#16a34a"
-      if (cardColorDot) {
-        cardColorDot.style.background = selectedColor
-      }
-      colorButtons.forEach((b) => b.classList.remove("active"))
-      button.classList.add("active")
+      applyTheme(button.dataset.theme || "green")
     })
   })
 
-  if (cardPointsInput && cardPointsValue) {
-    cardPointsInput.addEventListener("input", () => {
-      const value = cardPointsInput.value.trim()
-      cardPointsValue.textContent = value || "+1"
+  const allThemeInputs = document.querySelectorAll(".theme-inputs input[data-target], .theme-inputs textarea[data-target]")
+  allThemeInputs.forEach((input) => {
+    input.addEventListener("input", () => {
+      const parentPanel = input.closest(".theme-inputs")
+      if (parentPanel && parentPanel.classList.contains("active")) {
+        pushInputToCard(input)
+      }
     })
-  }
+  })
 
-  if (cardTextInput && cardDescriptionText) {
-    cardTextInput.addEventListener("input", () => {
-      const value = cardTextInput.value.trim()
-      cardDescriptionText.textContent = value || "Voeg een beschrijving toe in het Kaart-tabje."
-    })
-  }
+  applyTheme("green")
 }
 
 document.getElementById("addText").onclick = () => {

@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Create Your Playing Cards';
-$favicon = 'stickers/Logo MYOP.png';
+$favicon = 'logo/Logo MYOP.png';
 $extraStyles = ['create.css'];
 include 'db.php';
 include 'header.php';
@@ -10,7 +10,7 @@ include 'header.php';
     <section class="create-header">
         <div class="create-header-left">
             <a href="#" class="site-logo-link" aria-label="MYOP logo">
-                <img src="stickers/Logo MYOP.png" alt="Logo MYOP" class="site-logo">
+                <img src="logo/Logo MYOP.png" alt="Logo MYOP" class="site-logo">
             </a>
         </div>
         <div class="create-header-right">
@@ -41,12 +41,11 @@ include 'header.php';
             <div class="tab-content active" id="stickers-tab">
                 <div class="stickers-container">
                     <?php
-                    $allStickers = ff_get_all_stickers();
-                    $cardStickers = array_slice($allStickers, 0, 1);
-                    foreach ($cardStickers as $sticker): ?>
+                    $allStickers = ff_get_all_stickers('sitckers2');
+                    foreach ($allStickers as $sticker): ?>
                         <img src="<?php echo htmlspecialchars($sticker['path']); ?>" class="sticker" alt="Sticker <?php echo htmlspecialchars($sticker['name']); ?>">
                     <?php endforeach; ?>
-                    <?php if (empty($cardStickers)): ?>
+                    <?php if (empty($allStickers)): ?>
                         <p class="hint">Geen stickers gevonden.</p>
                     <?php endif; ?>
                 </div>

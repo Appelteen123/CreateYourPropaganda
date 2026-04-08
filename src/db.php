@@ -408,9 +408,14 @@ ff_ensure_file(ff_storage_file('users'));
 ff_ensure_file(ff_storage_file('posts'));
 ff_ensure_file(ff_storage_file('votes'));
 
-function ff_get_all_stickers()
+function ff_get_all_stickers($folder = 'sitckers2')
 {
-	$stickersDir = __DIR__ . '/stickers';
+	$safeFolder = trim((string) $folder, "/\\ \t\n\r\0\x0B");
+	if ($safeFolder === '' || strpos($safeFolder, '..') !== false) {
+		$safeFolder = 'sitckers2';
+	}
+
+	$stickersDir = __DIR__ . '/' . $safeFolder;
 	$stickers = [];
 
 	if (!is_dir($stickersDir)) {
@@ -423,7 +428,7 @@ function ff_get_all_stickers()
 		if (is_file($fullPath) && preg_match('/\.(png|jpg|jpeg|gif|webp)$/i', $file)) {
 			$stickers[] = [
 				'name' => pathinfo($file, PATHINFO_FILENAME),
-				'path' => 'stickers/' . $file,
+				'path' => $safeFolder . '/' . $file,
 				'file' => $file,
 			];
 		}

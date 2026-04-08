@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Choose Create Mode';
-$favicon = 'stickers/Logo MYOP.png';
+$favicon = 'logo/Logo MYOP.png';
 $extraStyles = ['create.css'];
 include 'header.php';
 ?>

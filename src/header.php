@@ -24,7 +24,7 @@ $extraStyles = $extraStyles ?? [];
 
 <nav>
     <div class="nav-container">
-        <a href="index.php" class="logo">📸 FotoForum</a>
+        <a href="index.php" class="logo">📸Create Your Own Propaganda</a>
         <div class="menu">
             <a href="index.php">Home</a>
             <a href="feed.php">Feed</a>

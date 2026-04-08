@@ -5,8 +5,8 @@ include 'header.php';
 
 <div class="container">
     <header class="hero">
-        <h1>Welkom bij FotoForum</h1>
-        <p>De plek om je mooiste foto's te delen en te beoordelen.</p>
+        <h1>Welkom bij Create Your Own Propaganda</h1>
+        <p>De plek om je mooiste Propagandaposters, en hardste standpunten te delen en te beoordelen.</p>
         
         <?php if(!isset($_SESSION['user_id'])): ?>
             <div class="cta-buttons">
@@ -16,7 +16,7 @@ include 'header.php';
     </header>
 
     <section class="leaderboard">
-        <h3>🏆 Top 20 Meest Gelikete Foto's</h3>
+        <h3>🏆 Top 20 Meest Gelikete posters</h3>
         <div class="top-posters">
             <?php
             $topPosts = ff_get_top_posts(20);
